@@ -1,11 +1,10 @@
-#!/usr/bin/python3.10.2 表示使用 python3.10.2
-
 import random
 
 min = 1
-max = 10
+max = 100
 count = 0
 target = random.randint(min, max)
+print(f"target is  {target}")
 print("============= 猜數字遊戲 ==============")
 
 while True:
@@ -14,8 +13,18 @@ while True:
     if keyin == target:
         print(f"賓果! 猜對了，答案是：{target}")
         print(f"你共猜了{count}次")
-        break
+        if input("要繼續玩嗎？(y/n)") == 'n':
+            break
+        else:
+            min = 1
+            max = 100
+            count = 0
+            target = random.randint(min, max)
+            print(f"target is  {target}")
+    elif keyin > target:
+        print("再小一點")
+        max = keyin - 1
     else:
-        print("猜錯了")
-        print(f"你已經猜了{count}次")
+        print("再大一點")
+        min = keyin + 1
 print("遊戲結束")
