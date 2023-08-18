@@ -22,7 +22,7 @@ def create_chrome_driver():
     options = Options()
     current_cwd = os.path.abspath(os.getcwd())
     options.chrome_executable_path=f"{current_cwd}\chromedriver_win32.exe"
-    #options.chrome_executable_path=f"{current_cwd}\chromedriver_linux64.exe"
+    # options.chrome_executable_path=f"{current_cwd}/chromedriver_linux64.exe"
     print(options.chrome_executable_path)
     # 建立 driver 物件實體
     driver=webdriver.Chrome(options=options)
