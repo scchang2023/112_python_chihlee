@@ -47,11 +47,11 @@ def connect_login_page(dr:webdriver)->None:
     btn_singin.send_keys(Keys.ENTER)
     return
 
-def connect_cur_meter_page(dr:webdriver)->None:
+def connect_meters_status_page(dr:webdriver)->None:
     dr.get("http://www.cnyiot.com/MMpublicw.aspx")
     return
 
-def get_cur_meter_status(dr:webdriver)->list:
+def get_meters_status(dr:webdriver)->list:
     meter_element = dr.find_element(By.ID, "table1")
     # print(meter_element.text)
     meter_element_list = meter_element.text.splitlines()
@@ -72,7 +72,7 @@ def get_cur_meter_status(dr:webdriver)->list:
     # print(data)
     return data
 
-def save_cur_meter_status_csv(data:list)->None:
+def save_meters_status_csv(data:list)->None:
     date = get_cur_date()
     filename = f"{date}-目前水錶使用狀態.csv"    
     with open(filename, mode='w', encoding='utf-8', newline='') as file:
@@ -124,10 +124,10 @@ def main():
     driver = create_chrome_driver()
     connect_login_page(driver)
     time.sleep(5)
-    connect_cur_meter_page(driver)
+    connect_meters_status_page(driver)
     time.sleep(5)
-    meters_status = get_cur_meter_status(driver)
-    save_cur_meter_status_csv(meters_status)
+    meters_status = get_meters_status(driver)
+    save_meters_status_csv(meters_status)
     for i in meters_status:
         print(i)
         connect_meter_history_page(i["水錶號碼"], driver)
