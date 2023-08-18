@@ -23,7 +23,7 @@ def get_cur_date()->str:
     date = f"{current_date.year}-{current_date.month}-{current_date.day}"
     return date
 
-def create_chrome_driver():
+def create_chrome_driver()->webdriver:
     options = Options()
     current_cwd = os.path.abspath(os.getcwd())
     options.chrome_executable_path=f"{current_cwd}\chromedriver_win32.exe"
@@ -33,11 +33,11 @@ def create_chrome_driver():
     driver=webdriver.Chrome(options=options)
     return driver
 
-def close_chrome_driver(dr:webdriver):
+def close_chrome_driver(dr:webdriver)->None:
     dr.close()
     return
 
-def connect_login_page(dr:webdriver):
+def connect_login_page(dr:webdriver)->None:
     dr.get("http://www.cnyiot.com/MLogin.aspx")
     username_input = dr.find_element(By.ID, "username")
     password_input = dr.find_element(By.ID, "password")
@@ -47,7 +47,7 @@ def connect_login_page(dr:webdriver):
     btn_singin.send_keys(Keys.ENTER)
     return
 
-def connect_cur_meter_page(dr:webdriver):
+def connect_cur_meter_page(dr:webdriver)->None:
     dr.get("http://www.cnyiot.com/MMpublicw.aspx")
     return
 
@@ -69,7 +69,7 @@ def get_cur_meter_status(dr:webdriver)->list:
         meter_item['供電方式'] = i[7]
         # print(meter_item)
         data.append(meter_item)
-    print(data)
+    # print(data)
     return data
 
 def save_cur_meter_status_csv(data:list)->None:
@@ -105,10 +105,9 @@ def get_meter_history(dr:webdriver)->list:
         meter_item['開始總水量'] = i[5]
         meter_item['結束總水量'] = i[6]
         meter_item['使用水量'] = i[8]
-        print(meter_item)
         data.append(meter_item)
         # total_usage += float(meter_item['使用水量'])
-    print(data)
+    # print(data)
     return data
 
 def save_meter_history_csv(meter:str, data:list)->None:
@@ -127,14 +126,15 @@ def main():
     time.sleep(5)
     connect_cur_meter_page(driver)
     time.sleep(5)
-    data = get_cur_meter_status(driver)
-    save_cur_meter_status_csv(data)
-    meter = "50300036790"
-    connect_meter_history_page(meter, driver)
-    time.sleep(5)
-    data = get_meter_history(driver)
-    time.sleep(5)
-    save_meter_history_csv(meter, data)
+    meters_status = get_cur_meter_status(driver)
+    save_cur_meter_status_csv(meters_status)
+    for i in meters_status:
+        print(i)
+        connect_meter_history_page(i["水錶號碼"], driver)
+        time.sleep(5)
+        meter_history = get_meter_history(driver)
+        time.sleep(3)
+        save_meter_history_csv(i["水錶名稱"], meter_history)
     close_chrome_driver(driver)
 
 if __name__ == "__main__":
