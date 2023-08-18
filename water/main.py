@@ -88,12 +88,13 @@ def connect_meter_history_page(meter:str, dr:webdriver)->None:
     dr.get(url)
     return
 
-def get_meter_history(dr:webdriver)->list:
+def get_meter_history(dr:webdriver)->(list, float):
     meter_element = dr.find_element(By.ID, "table1")
     # print(meter_element.text)
     meter_element_list = meter_element.text.splitlines()
     meter_element_list = meter_element_list[7:]
     data = []
+    total_usage = 0
     for i in meter_element_list:
         meter_item={}
         i = i.replace("查看详情","")
@@ -105,12 +106,12 @@ def get_meter_history(dr:webdriver)->list:
         meter_item['開始總水量'] = i[5]
         meter_item['結束總水量'] = i[6]
         meter_item['使用水量'] = i[8]
+        total_usage += float(meter_item['使用水量'])
         data.append(meter_item)
-        # total_usage += float(meter_item['使用水量'])
-    # print(data)
-    return data
+    # print(data, total_usage)
+    return (data, total_usage)
 
-def save_meter_history_csv(meter:str, data:list)->None:
+def save_meter_history_csv(meter:str, data:list, usage:float)->None:
     date = get_cur_date()
     filename = f"{date}-{meter}.csv"
     with open(filename, mode='w', encoding='utf-8', newline='') as file:
@@ -118,23 +119,25 @@ def save_meter_history_csv(meter:str, data:list)->None:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(data)
+    with open(filename, mode='a', encoding='utf-8', newline='') as file:
+        file.writelines("全部總使用量為 %.1f" % usage)
     return
 
 def main():
     driver = create_chrome_driver()
     connect_login_page(driver)
-    time.sleep(5)
+    time.sleep(3)
     connect_meters_status_page(driver)
-    time.sleep(5)
+    time.sleep(3)
     meters_status = get_meters_status(driver)
     save_meters_status_csv(meters_status)
     for i in meters_status:
         print(i)
         connect_meter_history_page(i["水錶號碼"], driver)
-        time.sleep(5)
-        meter_history = get_meter_history(driver)
         time.sleep(3)
-        save_meter_history_csv(i["水錶名稱"], meter_history)
+        (meter_history, total_usage) = get_meter_history(driver)
+        time.sleep(3)
+        save_meter_history_csv(i["水錶名稱"], meter_history, total_usage)
     close_chrome_driver(driver)
 
 if __name__ == "__main__":
