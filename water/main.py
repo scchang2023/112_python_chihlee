@@ -7,6 +7,7 @@ import time
 import csv
 from datetime import datetime
 import pytz
+import os
 
 def get_cur_date()->str:
     '''
@@ -116,20 +117,19 @@ def main():
     driver = create_chrome_driver()
     connect_login_page(driver)
     time.sleep(5)
-
     connect_cur_meter_page(driver)
     time.sleep(5)
     data = get_cur_meter_status(driver)
     save_cur_meter_status_csv(data)
-
     meter = "50300036790"
     connect_meter_history_page(meter, driver)
     time.sleep(5)
     data = get_meter_history(driver)
     time.sleep(5)
     save_meter_history_csv(meter, data)
-
     close_chrome_driver(driver)
+    current_cwd = os.path.abspath(os.getcwd())
+    print(current_cwd)    
 
 if __name__ == "__main__":
     main()
