@@ -20,7 +20,10 @@ def get_cur_date()->str:
 
 def create_chrome_driver():
     options = Options()
-    options.chrome_executable_path=".\chromedriver.exe"
+    current_cwd = os.path.abspath(os.getcwd())
+    options.chrome_executable_path=f"{current_cwd}\chromedriver_win32.exe"
+    #options.chrome_executable_path=f"{current_cwd}\chromedriver_linux64.exe"
+    print(options.chrome_executable_path)
     # 建立 driver 物件實體
     driver=webdriver.Chrome(options=options)
     return driver
@@ -128,8 +131,7 @@ def main():
     time.sleep(5)
     save_meter_history_csv(meter, data)
     close_chrome_driver(driver)
-    current_cwd = os.path.abspath(os.getcwd())
-    print(current_cwd)    
+  
 
 if __name__ == "__main__":
     main()
