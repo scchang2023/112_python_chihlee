@@ -3,10 +3,15 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+# 時間 delay 模組
 import time
+# 存成 csv 檔
 import csv
+# 取得目前時間模組
 from datetime import datetime
+# 取得時區
 import pytz
+# 系統路徑
 import os
 
 def get_cur_date()->str:
@@ -131,7 +136,6 @@ def main():
     time.sleep(5)
     save_meter_history_csv(meter, data)
     close_chrome_driver(driver)
-  
 
 if __name__ == "__main__":
     main()
